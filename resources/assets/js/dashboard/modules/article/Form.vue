@@ -171,24 +171,28 @@ export default {
       return emojione.toImage(marked(content))
     },
     onSubmit() {
-      if (!this.tags || !this.selected) {
-        toastr.error('Category and Tag must select one or more.')
-        return;
-      }
+//      if (!this.tags || !this.selected) {
+//        toastr.error('Category and Tag must select one or more.')
+//        return;
+//      }
 
       let tagIDs = []
       let url = 'article' + (this.article.id ? '/' + this.article.id : '')
       let method = this.article.id ? 'patch' : 'post'
 
-      for (var i = 0; i < this.tags.length; i++) {
-        tagIDs[i] = this.tags[i].id
-      }
-
       this.article.published_at = this.startTime.time
       this.article.content = this.simplemde.value()
-      this.article.category_id = this.selected.id
-      this.article.tags = JSON.stringify(tagIDs)
-
+      // category
+      if(this.selected) {
+        this.article.category_id = this.selected.id
+      }
+      // tags
+      if(this.tags) {
+        for (var i = 0; i < this.tags.length; i++) {
+          tagIDs[i] = this.tags[i].id
+        }
+        this.article.tags = JSON.stringify(tagIDs)
+      }
       this.$http[method](url, this.article)
         .then((response) => {
           toastr.success('You ' + this.mode + 'd the article success!')
